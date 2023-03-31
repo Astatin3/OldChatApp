@@ -1,0 +1,14 @@
+{
+    "1234" : {
+        "id"  : "1234",
+        "name": "Person1",
+        "color": "#00ff00",
+        "auth": "XXYYZZYY"
+    },
+    "4321" : {
+        "id"  : "4321",
+        "name": "Person2",
+        "color": "#ffffff",
+        "auth": "YYXXYYZZ"
+    }
+}

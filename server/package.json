@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "crypto": "^1.0.1",
+    "fs": "^0.0.1-security",
+    "querystring": "^0.2.1",
+    "ws": "^8.8.1"
+  }
+}

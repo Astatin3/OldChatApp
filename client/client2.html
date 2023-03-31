@@ -1,0 +1,473 @@
+x<!DOCTYPE html>
+<html>
+  <head>
+    <link href='./font/font.css' rel='stylesheet'>
+    <script src="./crypto-js.min.js"></script>
+    <meta charset="utf-8">
+    <title id="title">Logging in...</title>
+    <style media="screen">
+      body {
+        background-color: #1f1f1f;
+        background-image: url("./triangle.png");
+        margin: 0;
+        overflow-x: hidden;
+      }
+
+      * {
+        font-family: 'Josefin Sans';
+      }
+
+      .chatbox {
+        width: 50%;
+        bottom: 0px;
+        background-color: #1f1f1f;
+        top: 0px;
+        position: absolute;
+        margin: 0 25%;
+        padding-left: 5px;
+        font-size: 30px;
+        overflow-wrap: break-word;
+        overflow: auto;
+        padding-bottom:100px;
+      }
+
+      .InputWrapper {
+        margin: 0 calc(25% + 5px);
+        padding: 0px;
+        position: absolute;
+        width: calc(50% - 5px);
+        height: 40px;
+        bottom: 5px;
+        background-color: #121212;
+      }
+
+      input {
+        width: calc(100% - 40px);
+        height: calc(100% - 10);
+        margin-top: 5px;
+        position: absolute;
+        font-size: 20px;
+        background-color: #121212;
+        outline: none;
+        color: white;
+        padding: 5px;
+        border: 0px;
+      }
+
+      .message {
+        display: inline;
+      }
+      
+      .imageurl {
+        display: inline;
+        font-size: 15px;
+      }
+
+      svg {
+        fill:white;
+        cursor: pointer;
+      }
+
+      .Gear {
+        bottom: calc(8px);
+        right: 5px;
+        scale: 30px;
+        position: absolute;
+        z-index: 100;
+      }
+
+      .Close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+      }
+
+      .Cover {
+        backdrop-filter: blur(5px);
+        position: absolute;
+        padding: 10px;
+        width: calc(50% - 10px);
+        background-color: rgba(12, 12, 12, 0.5);
+        bottom: 0px;
+        top: 0px;
+        margin-left: 25%;
+        z-index: 1000;
+        color:white;
+        visibility: hidden;
+      }
+
+      .id {
+        color:#505050;
+        font-size:15px;
+        margin-top:-15px;
+        left: 7px;
+        position: absolute;
+      }
+
+      .msghighlight {
+        background-color: #1a1a1a;
+        padding-left: 5px;
+        padding-bottom: 5px;
+        margin-top: 5px;
+        margin-left: -5px;
+      }
+
+      .image {
+        max-width: 50%;
+        min-width: 100px;
+      }
+
+      .Settings {
+        font-size: 20px;
+      }
+
+      button {
+        border: none;
+        padding: 10px 10px;
+        cursor: pointer;
+        text-align: center;
+        color: white;
+        background-color: #1a1a1a;
+        font-size: 20px;
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #1f1f1f;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #3f3f3f;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: #2f2f2f;
+      }
+
+
+      #btn {
+        width: 100px;
+        height: 40px;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="chatbox"></div>
+
+    <br>
+
+    <div class="send">
+      <form method="post">
+        <div class="InputWrapper">
+          <input type="text" id="Input" value="" autocomplete="off" placeholder="Start typing here...">
+          <svg xmlns="http://www.w3.org/2000/svg" class="Gear" id="Gear" fill-rule="evenodd" clip-rule="evenodd" width="24" height="24"><path d="M12 8.666c-1.838 0-3.333 1.496-3.333 3.334s1.495 3.333 3.333 3.333 3.333-1.495 3.333-3.333-1.495-3.334-3.333-3.334m0 7.667c-2.39 0-4.333-1.943-4.333-4.333s1.943-4.334 4.333-4.334 4.333 1.944 4.333 4.334c0 2.39-1.943 4.333-4.333 4.333m-1.193 6.667h2.386c.379-1.104.668-2.451 2.107-3.05 1.496-.617 2.666.196 3.635.672l1.686-1.688c-.508-1.047-1.266-2.199-.669-3.641.567-1.369 1.739-1.663 3.048-2.099v-2.388c-1.235-.421-2.471-.708-3.047-2.098-.572-1.38.057-2.395.669-3.643l-1.687-1.686c-1.117.547-2.221 1.257-3.642.668-1.374-.571-1.656-1.734-2.1-3.047h-2.386c-.424 1.231-.704 2.468-2.099 3.046-.365.153-.718.226-1.077.226-.843 0-1.539-.392-2.566-.893l-1.687 1.686c.574 1.175 1.251 2.237.669 3.643-.571 1.375-1.734 1.654-3.047 2.098v2.388c1.226.418 2.468.705 3.047 2.098.581 1.403-.075 2.432-.669 3.643l1.687 1.687c1.45-.725 2.355-1.204 3.642-.669 1.378.572 1.655 1.738 2.1 3.047m3.094 1h-3.803c-.681-1.918-.785-2.713-1.773-3.123-1.005-.419-1.731.132-3.466.952l-2.689-2.689c.873-1.837 1.367-2.465.953-3.465-.412-.991-1.192-1.087-3.123-1.773v-3.804c1.906-.678 2.712-.782 3.123-1.773.411-.991-.071-1.613-.953-3.466l2.689-2.688c1.741.828 2.466 1.365 3.465.953.992-.412 1.082-1.185 1.775-3.124h3.802c.682 1.918.788 2.714 1.774 3.123 1.001.416 1.709-.119 3.467-.952l2.687 2.688c-.878 1.847-1.361 2.477-.952 3.465.411.992 1.192 1.087 3.123 1.774v3.805c-1.906.677-2.713.782-3.124 1.773-.403.975.044 1.561.954 3.464l-2.688 2.689c-1.728-.82-2.467-1.37-3.456-.955-.988.41-1.08 1.146-1.785 3.126"/></svg>
+          <input type="submit" name="button" id="btn" value="Send">
+        </div><br>
+      </form>
+    </div>
+
+      <div class="Cover" id="Cover">
+        <svg xmlns="http://www.w3.org/2000/svg" class="Close" id="Close" width="24" height="24" viewBox="0 0 24 24"><path d="M12 11.293l10.293-10.293.707.707-10.293 10.293 10.293 10.293-.707.707-10.293-10.293-10.293 10.293-.707-.707 10.293-10.293-10.293-10.293.707-.707 10.293 10.293z"/></svg>
+        <div class="Settings" id="Settings">
+          <p style="font-size: 40px; margin: 0;">Settings</p><br><br>
+          <p style="font-size: 30px; margin: 0;">Account:</p><br>
+          <p style="display: inline">Username:</p><input style="width: 100px; height: 24px; padding: 0px" type="text"><br>
+          <p style="font-size: 20px; display: inline">Name color: </p><input style="width: 40px; height: 24px; padding: 0px" value="#ffffff" type="color">
+        </div>
+    </div>
+
+    <script type="text/javascript">
+    var socket
+    
+    const chatbox = document.querySelector(".chatbox")
+    const cover = document.querySelector(".cover")
+    const input = document.querySelector(".InputWrapper")
+
+    const key = "YYXXYYZZ"
+    const ID = "4321"
+    
+    var MsgCount = 0
+    let now = new Date()
+
+    const Input = document.getElementById("Input")
+
+    function LoadMSGS(startingpoint) {
+      socket.send(JSON.stringify({
+          type: "load",
+          Sessionid: Sessionid,
+          data: startingpoint
+        }))
+    }
+
+    function isURL(str) {
+      const a = document.createElement('a')
+      a.href = str
+      const Ret = (a.host && a.host != window.location.host)
+      a.remove()
+      return Ret
+    }
+
+    function isImage(str) {
+      return /\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(str)
+    }
+
+
+    function getTime(Millis){
+      const date = new Date(Millis)
+      
+      if(date.getDate() != now.getDate()){
+        return date.getMonth()+1 + "/" + date.getDate() + "/" + date.getFullYear()
+      }else{
+        var Hour = ""
+        var Minute = ""
+        var AmPm = ""
+
+        if(date.getHours() == 0){
+          Hour = "12"
+          AmPm = "AM"
+        }else if(date.getHours() < 12){
+          Hour = date.getHours()
+          AmPm = "AM"
+        }else if(date.getHours() == 12){
+          Hour = "12"
+          AmPm = "PM"
+        }else{
+          Hour = date.getHours() - 12
+          AmPm = "PM"
+        }
+
+        if(date.getMinutes() < 10){
+          Minute = "0" + date.getMinutes()
+        }else{
+          Minute = date.getMinutes()
+        }
+
+        return Hour + ":" + Minute + " " + AmPm
+
+      }
+    }
+
+  document.getElementById("Close").addEventListener("click", function(){
+    document.getElementById("Cover").style.visibility = "hidden"
+    document.getElementById("Settings").style.visibility = "hidden"
+    console.log("test")
+  });
+
+  document.getElementById("Gear").addEventListener("click", function(){
+     document.getElementById("Cover").style.visibility = "visible"
+     document.getElementById("Settings").style.visibility = "visible"
+  });
+
+  window.addEventListener("resize", Resize)
+  window.addEventListener("load", Resize)
+  function Resize(){
+    if(window.innerWidth < 750){
+      chatbox.style.margin = "0"
+      chatbox.style.width = "calc(100% - 5px)"
+      chatbox.style.right = "0px"
+      chatbox.style.left = "0px"
+
+      cover.style.margin = "0"
+      cover.style.width = "100%"
+      
+      input.style.margin = "0"
+      input.style.width = "calc(100% - 13px)"
+
+    }else if(chatbox.style.margin = "0"){
+
+      chatbox.style.marginLeft = "25%"
+      chatbox.style.width = "50%"
+
+      cover.style.marginLeft = "25%"
+      cover.style.width = "calc(50% - 10px)"
+
+      input.style.marginLeft = "calc(25% + 5px)"
+      input.style.width = "calc(50% - 8px)"
+    }
+  }
+
+  document.getElementById("Input").addEventListener("keyup", function(){
+    if(input.style.color == "white"){
+    }else if(Input.value.length > 200){
+      Input.style.color = "red"
+    }else if(isURL(Input.value)) {
+      Input.style.color = "blue"
+    }else if(Input.style.color != "white"){
+      Input.style.color = "white"
+    }
+  });
+
+    connect()
+
+    function connect() {
+
+      //socket = new WebSocket("ws://" + (new URL(window.location.href)).hostname + ":12301/")
+      socket = new WebSocket("ws://localhost:12301/")
+
+      chatbox.innerHTML = ""
+
+      socket.onopen = function() {
+
+        socket.send(JSON.stringify({
+          id : ID,
+          data : CryptoJS.AES.encrypt(JSON.stringify({
+            type : "Recap",
+            point : 0,
+            salt : CryptoJS.enc.Base64.stringify(CryptoJS.lib.WordArray.random(17))
+          }), key).toString()
+        }))
+
+        console.log("socket connected");
+      }
+
+      socket.onmessage = function (message) {
+        message = JSON.parse(message.data)
+
+        const data = JSON.parse(CryptoJS.AES.decrypt(message.data, key).toString(CryptoJS.enc.Utf8))
+
+        console.log(data)
+        switch(data.type){
+          case "message":
+            console.log(message)
+            MsgCount++
+
+            var color = "#ffffff"
+              if(message.id == ID){
+                color = "#a0a0a0"
+            }
+
+            if(isURL(data.message)){
+              if(isImage(data.message)){
+                chatbox.innerHTML += ("<div class='msghighlight'><a style='color:" + data.color + ";line-height: 1.8' class='message' id='LatestName'></a><br>" +
+                                  "<p class='id' id='LatestID'></p><image class='image' src='" + data.message + "'></div>")
+              }else{
+                chatbox.innerHTML += ("<div class='msghighlight'><a style='color:" + data.color + ";line-height: 1.8' class='message' id='LatestName'></a>" +
+                                      "<p class='id' id='LatestID'></p>" +
+                                      "<a class='message' style='color:#5050ff' id='LatestMSG'></a></div>")
+                document.getElementById("LatestMSG").innerText = data.message
+                document.getElementById("LatestMSG").href = data.message
+                document.getElementById("LatestMSG").id = ""
+              }
+            }else{
+              chatbox.innerHTML += ("<div class='msghighlight'><a style='color:" + data.color + ";line-height: 1.8' class='message' id='LatestName'></a>" +
+                                    "<p class='id' id='LatestID'></p>" +
+                                    "<p class='message' style='color:" + color + "' id='LatestMSG'></p></div>")
+              document.getElementById("LatestMSG").innerText = data.message
+              document.getElementById("LatestMSG").id = ""
+            }
+
+            document.getElementById("LatestName").innerText = data.name + ": "
+            document.getElementById("LatestID").innerText = getTime(data.time)
+
+            document.getElementById("LatestName").id = ""
+            document.getElementById("LatestID").id = ""
+
+            chatbox.scrollTop = chatbox.scrollHeight
+
+            break;  
+          case "RecapMSG":
+
+            var color = "#ffffff"
+            if(message.id == ID){
+              color = "#a0a0a0"
+            }
+
+            if(isURL(data.message)){
+              if(isImage(data.message)){
+                chatbox.innerHTML = ("<div class='msghighlight'><a style='color:" + data.color + ";line-height: 1.8' class='message' id='LatestName'></a><br>" +
+                                  "<p class='id' id='LatestID'></p><image class='image' src='" + data.message + "'></div>") + chatbox.innerHTML
+              }else{
+                chatbox.innerHTML = ("<div class='msghighlight'><a style='color:" + data.color + ";line-height: 1.8' class='message' id='LatestName'></a>" +
+                                      "<p class='id' id='LatestID'></p>" +
+                                      "<a class='message' style='color:#5050ff' id='LatestMSG'></a></div>") + chatbox.innerHTML
+                document.getElementById("LatestMSG").innerText = data.message
+                document.getElementById("LatestMSG").href = data.message
+                document.getElementById("LatestMSG").id = ""
+              }
+            }else{
+              chatbox.innerHTML = ("<div class='msghighlight'><a style='color:" + data.color + ";line-height: 1.8' class='message' id='LatestName'></a>" +
+                                    "<p class='id' id='LatestID'></p>" +
+                                    "<p class='message' style='color:" + color + "' id='LatestMSG'></p></div>") + chatbox.innerHTML
+              document.getElementById("LatestMSG").innerText = data.message
+              document.getElementById("LatestMSG").id = ""
+            }
+
+            document.getElementById("LatestName").innerText = data.name + ": "
+            document.getElementById("LatestID").innerText = getTime(data.time)
+
+            document.getElementById("LatestName").id = ""
+            document.getElementById("LatestID").id = ""
+
+
+            break
+          case "StartFile":
+            chatbox.innerHTML = "<p style='color:#cccccc'> This is the start of the chat.</p><br>" + chatbox.innerHTML
+            break
+          case "RecapFinished":
+            chatbox.innerHTML = "<button id='LoadMore' onclick='LoadMore(this)'>Load More</button>" + chatbox.innerHTML
+            chatbox.scrollTop = chatbox.scrollHeight
+            break
+          case "Error":
+            chatbox.innerHTML += "<p style='color:#ff0000'>Error: " + data.message + "</p>" + "<br>"
+            break;
+        }
+      }
+
+      document.querySelector("#btn").addEventListener('click', function (e) {
+        e.preventDefault()
+        var text = document.querySelector("#Input").value.trim()
+        if (text == "") {
+          return false
+        }else if(text.length > 200){
+          alert("200 Character limit!")
+          return false
+        }
+
+          socket.send(JSON.stringify({
+            id: ID,
+            data: CryptoJS.AES.encrypt(JSON.stringify({
+              type : "message",
+              message : text,
+              salt: CryptoJS.enc.Base64.stringify(CryptoJS.lib.WordArray.random(17))
+            }), key).toString()
+          }))
+        
+        document.querySelector("#Input").value = ""
+        chatbox.scrollTop = chatbox.scrollHeight
+      })
+
+      socket.onclose = function (err) {
+        console.log("closed");
+        console.log(err);
+
+        chatbox.innerHTML += ("<p style='color:#ff0000'>" + "Error: Connection Closed" + "</p><br><button onclick='connect()' id='refreshbtn'>Refresh</button>")
+        chatbox.scrollTop = chatbox.scrollHeight
+      }
+
+      socket.onerror = function (err) {
+        console.log(err)
+      }
+    }
+
+    function LoadMore(e) {
+      MsgCount += 50
+      socket.send(JSON.stringify({
+        id : ID,
+        data : CryptoJS.AES.encrypt(JSON.stringify({
+          type : "Recap",
+          point : MsgCount + 50,
+          salt : CryptoJS.enc.Base64.stringify(CryptoJS.lib.WordArray.random(17))
+        }), key).toString()
+      }))
+
+      e.remove()
+    }
+
+    </script>
+
+  </body>
+</html>
